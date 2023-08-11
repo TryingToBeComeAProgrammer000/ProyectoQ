@@ -39,7 +39,8 @@ namespace ProyectoQ
                 Console.WriteLine("Adios!");
 
             }
-
+            //ave maria madre de dios
+            Console.WriteLine("hdjksahdkjhkads");
 
 
 
