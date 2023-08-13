@@ -44,6 +44,11 @@ namespace ProyectoQ
             LeerArchivo leerArchivo = new LeerArchivo(path);
            
           Imprimirenpantalla(leerArchivo.LeerNombres());
+            // ahora vamos con la escritura del documento
+            EscribirArchivo escribirArchivo = new EscribirArchivo(path);
+            Console.Write("escriba un nombre y apellidos: ");
+            escribirArchivo.EscribirNombre(Console.ReadLine());
+            Imprimirenpantalla(leerArchivo.LeerNombres());
         }
 
         private static void Imprimirenpantalla(List<string> nombres)
@@ -52,7 +57,7 @@ namespace ProyectoQ
                     Console.WriteLine(nombre);
         }
 
-
+       
       
 
 
