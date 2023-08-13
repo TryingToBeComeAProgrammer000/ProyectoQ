@@ -6,8 +6,6 @@ namespace ProyectoQ
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
 
             Console.WriteLine("Bienvenido al organizador de datos de empleados");
             Console.WriteLine("");
@@ -39,8 +37,7 @@ namespace ProyectoQ
                 Console.WriteLine("Adios!");
 
             }
-            //ave maria madre de dios
-            Console.WriteLine("hdjksahdkjhkads");
+          
 
 
 
@@ -50,6 +47,57 @@ namespace ProyectoQ
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Dioooooss estaaa aqui estaa aquiii
         }
     }
 }
