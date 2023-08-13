@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProyectoQ
 {
@@ -37,10 +38,22 @@ namespace ProyectoQ
                 Console.WriteLine("Adios!");
 
             }
+            
             string path = "C:\\Users\\ryome\\OneDrive\\Escritorio\\Nueva carpeta (4)\\ProyectoQ\\ProyectoQ\\Archivos\\Empleados.txt";
-          
+
+            LeerArchivo leerArchivo = new LeerArchivo(path);
+           
+          Imprimirenpantalla(leerArchivo.LeerNombres());
+        }
+
+        private static void Imprimirenpantalla(List<string> nombres)
+            {
+                  foreach (var nombre in nombres )
+                    Console.WriteLine(nombre);
+        }
 
 
+      
 
 
 
@@ -99,6 +112,6 @@ namespace ProyectoQ
 
 
             // Dioooooss estaaa aqui estaa aquiii
-        }
+        
     }
 }

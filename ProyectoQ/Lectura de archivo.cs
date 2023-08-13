@@ -16,16 +16,19 @@ namespace ProyectoQ
             _path = path;
         }
         //metodo para leer el archivo
-        public void LeerNombres()
+        public List<string> LeerNombres()
         {
             using (StreamReader sr = new StreamReader (_path))
             {
               while (sr.EndOfStream != true)
                 {
                  nombres.Add(sr.ReadLine());
-
+                    
                 }
+                sr.Close();
+                
             }
+            return nombres;
         }
 
     }
