@@ -37,6 +37,7 @@ namespace ProyectoQ
                 Console.WriteLine("Adios!");
 
             }
+            string path = "C:\\Users\\ryome\\OneDrive\\Escritorio\\Nueva carpeta (4)\\ProyectoQ\\ProyectoQ\\Archivos\\Empleados.txt";
           
 
 
