@@ -7,7 +7,7 @@ namespace ProyectoQ
     {
         static void Main(string[] args)
         {
-
+            Console.WriteLine("holaaaaaaa");
             Console.WriteLine("Bienvenido al organizador de datos de empleados");
             Console.WriteLine("");
             Console.WriteLine("─── ❖ ── ✦ ── ❖ ─── ✦ ─── ❖ ── ✦ ── ❖ ───");

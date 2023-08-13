@@ -1,0 +1,597 @@
+Class Program.cs
+
+
+using ConsoleApp17;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+
+
+// Este proyecto se basa en la creación de una "página" en donde podremos comprar boletos para realizar viajes en un ferry.
+
+namespace BorradorProyectoFerry
+{
+
+    public class PantallaPrincipal
+    {
+
+        static bool[] listaDisponibilidad = new bool[4];
+
+        static datos ConsultaDatos = new datos();
+
+        static int controlUsuarios = 0;
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            while (true)
+            {
+
+                Horarios();
+                PantallaRegistro();
+                GenerarDisponibilidad();
+
+                /* Esta es la sección donde se muestran los horarios disponibles para la compra del boleto. Los horarios son
+                aleatorios y no son los mismos disponibles y no disponibles cada vez que se ejecuta el programa */
+
+                static void Horarios()
+                {
+                    Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄");
+                    Console.WriteLine("  ");
+                    Console.WriteLine("  ");
+                    Console.WriteLine("**HORARIOS PARA LA SALIDA PUNTARENAS A QUEPOS**");
+                    Console.WriteLine("  ");
+                    Console.WriteLine("  ");
+
+
+
+                    bool[] disponibilidad = GenerarDisponibilidad();
+
+ 
+                    MostrarHorarios();
+
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+                    Console.WriteLine("Digite un número del 1 al 4 en donde hay espacios: ");
+                    Console.WriteLine("");
+                    Console.WriteLine("Digite 5 para salir de la aplicación");
+
+                    Console.WriteLine(" ");
+                    Console.WriteLine(" ");
+                    Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+
+
+                    int operador;
+
+
+                    /* Este es el código que nos permite elegir una opción de horario del 1 al 4, y el 5 como tecla para salir del programa 
+                     
+                       El catch (FormatException) lo utilizamos para apartar la evaluación del error de si se ingresaba una letra a la hora de
+                       elegir los horarios y no meterlo en el mismo if, ya que presentaba algunos problemas o evaluaba el mismo error */
+
+
+                    do
+                    {
+                        string input = Console.ReadLine();
+
+                        try
+                        {
+                            operador = int.Parse(input);
+                            if (operador >= 1 && operador <= 4)
+                            {
+                                if (listaDisponibilidad[operador - 1])
+                                {
+                                    Console.Clear();
+                                    PantallaRegistro();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No hay espacios disponibles, por favor ingrese un dígito valido");
+                                    operador = 0;
+                                }
+                            }
+                            else if (operador == 5)
+                            {
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Error: Debes ingresar solamente un número del rango dado");
+                                operador = 0;
+                            }
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: Debes ingresar solamente un número");
+                            operador = 0;
+                        }
+                    } while (operador < 1 || operador > 5);
+
+                }
+
+
+                /* Este es el código que se encarga de generar la disponibilidad de los horarios y mostrarlos */
+
+
+                static bool[] GenerarDisponibilidad()
+                {
+                    Random random = new Random();
+                    bool[] disponibilidad = new bool[4];
+
+                    // Genera índices aleatorios para los horarios disponibles
+                    int[] indicesDisponibles = GenerarIndicesAleatorios(2, disponibilidad.Length);
+
+                    // Establece disponibilidad
+                    for (int i = 0; i < disponibilidad.Length; i++)
+                    {
+                        disponibilidad[i] = Array.IndexOf(indicesDisponibles, i) != -1;
+                    }
+
+                    return disponibilidad;
+                }
+
+                static int[] GenerarIndicesAleatorios(int cantidad, int maximo)
+                {
+                    Random random = new Random();
+                    int[] indices = new int[cantidad];
+
+                    for (int i = 0; i < cantidad; i++)
+                    {
+                        int indice;
+                        do
+                        {
+                            indice = random.Next(maximo);
+                        } while (Array.IndexOf(indices, indice) != -1);
+
+                        indices[i] = indice;
+                    }
+
+                    return indices;
+                }
+
+
+                static void MostrarHorarios()
+                {
+                    string[] horarios = { "9:00 am", "12:00 pm", "3:00 pm", "8:00 pm" };
+
+                    Random random = new Random();
+
+                    List<bool> disponibilidad = new List<bool> { false, true, false, true };
+
+                    // Genera la disponibilidad de horarios de manera aleatoria
+                    for (int i = 0; i < disponibilidad.Count; i++)
+                    {
+                        int indice = random.Next(i, disponibilidad.Count);
+                        bool temp = disponibilidad[i];
+                        disponibilidad[i] = disponibilidad[indice];
+                        disponibilidad[indice] = temp;
+                    }
+                    listaDisponibilidad = disponibilidad.ToArray();
+                    ConsultaDatos.Horarios = horarios.ToArray();
+
+                    for (int i = 0; i < disponibilidad.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. Horario: {horarios[i]} - {(listaDisponibilidad[i] ? "Disponible" : "No disponible")}");
+
+                    }
+                }
+
+
+
+                /* Este es el código que nos muestra la pantalla de registro una vez que elegimos un horario disponible y
+                nos pide registrarnos para crear la factura de la compra del boleto */
+
+                static void PantallaRegistro()
+                {
+                    Console.WriteLine(" ");
+                    Console.WriteLine("**REGISTRO**");
+                    Console.WriteLine(" ");
+                    Console.WriteLine(" ");
+                    Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+
+
+
+                    // Ingresar datos del nombre
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("Ingrese su nombre:");
+                    string nombre = Console.ReadLine();
+
+                    // Estos dos while verifican si los caracteres ingresados en el nombre son validos, prohiben caracteres especiales, números y espacios vacíos
+                    while (string.IsNullOrEmpty(nombre))
+                    {
+                        Console.WriteLine("Error: El nombre no puede estar en blanco. Por favor, ingrese su nombre nuevamente.");
+                        nombre = Console.ReadLine();
+                    }
+                    while (!Regex.IsMatch(nombre, @"^[a-zA-Z-Ñ-ñ ]+$"))
+                    {
+                        Console.WriteLine("Error: El nombre debe contener solo letras. Por favor, ingrese su nombre nuevamente.");
+                        nombre = Console.ReadLine();
+                    }
+
+                    // El Regex.IsMatch lo usamos para marcar los caracteres permitidos a la hora de ingresar datos
+
+
+
+
+
+
+                    // Ingresar datos del apellido
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("Ingrese sus apellidos:");
+                    string apellido = Console.ReadLine();
+
+                    // Estos dos while verifican si los caracteres ingresados en el apellido son validos, prohiben caracteres especiales, números y espacios vacíos
+                    while (string.IsNullOrEmpty(nombre))
+                        while (string.IsNullOrEmpty(apellido))
+                    {
+                        Console.WriteLine("Error: Los apellidos no pueden estar en blanco. Por favor, ingrese sus apellidos nuevamente.");
+                        apellido = Console.ReadLine();
+                    }
+
+                    while (!Regex.IsMatch(apellido, @"^[a-zA-Z-Ñ-ñ ]+$"))
+                    {
+                        Console.WriteLine("Error: Los apellidos deben contener solo letras. Por favor, ingrese sus apellidos nuevamente.");
+                        apellido = Console.ReadLine();
+                    }
+
+
+
+
+
+
+
+
+                    /* Ingresar datos de la cédula
+                     
+                     El BigInteger lo usamos para permitirle al programa leer números mas grandes
+                     ya que nos ponía un límite a la hora de poner mas dígitos de los permitidos inicialmente */
+
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("Ingrese su numero de cédula:");
+                    string cedulaString = Console.ReadLine();
+                    BigInteger cedula;
+
+                    // Este while verifica si en el número de cédula no hay letras o espacios en blanco
+                    while (string.IsNullOrEmpty(nombre))
+                        while (!BigInteger.TryParse(cedulaString, out cedula))
+                    {
+                        Console.WriteLine("Error: El número de cédula debe contener solo números. Por favor, ingrese su cédula nuevamente.");
+                        cedulaString = Console.ReadLine();
+                    }
+
+
+
+                    // Ingresar datos de la dirección de correo
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("Ingrese su dirección de correo electrónico:");
+                    string direccion = Console.ReadLine();
+
+                    // Este while solo verifica si no hay caracteres vacíos en el correo electrónico
+                    while (string.IsNullOrEmpty(direccion))
+                    {
+                        Console.WriteLine("Error: El correo electrónico no puede estar en blanco. Por favor, ingrese su correo electrónico nuevamente.");
+                        direccion = Console.ReadLine();
+                    }
+
+
+                    /* Esta parte del código se encarga de agarrar todos los datos ingresados y sus respectivas variables y almacenarlas en un arreglo para
+                    después enviarlas a nuestra base de datos e imprimirla en la pantalla de los clientes que ya se registraron */
+
+
+
+                    string[] datosCliente = new string[] { nombre, " ", apellido, " ", cedulaString, " ", direccion };
+                    string[] registroCliente = { nombre, apellido, cedulaString, direccion };
+                    if (controlUsuarios == 0)
+                    {
+                        ConsultaDatos.Clientes = registroCliente.ToArray();
+                    }
+                    else
+                    {
+                        ConsultaDatos.Cliente12 = registroCliente.ToArray();
+                    }
+
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+                    Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+
+
+
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+                    Console.WriteLine("Para crear su factura digite ( F ) / Salir ( S )");
+
+
+
+                    /* Este while se encarga de leer la opción que ingrese el usuario, si su opción es F para facturar
+                     el programa continua y le muestra su factura con los datos que ingresó anteriormente */
+
+                    while (true)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+                        if (keyInfo.Key == ConsoleKey.F)
+                        {
+
+                            Console.Clear();
+
+                            PantallaFactura();
+                        }
+                        else if (keyInfo.Key == ConsoleKey.S)
+                        {
+                            Environment.Exit(0);
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nOpción inválida. Presione 'F' o 'S'.");
+                        }
+                    }
+
+
+
+                    // Esta es la pantalla de facturación, se encarga de mostrar la factura con los datos que el cliente ingresó anteriormente
+
+
+                    void PantallaFactura()
+                    {
+
+
+                        Console.WriteLine("**FACTURACIÓN**");
+                        Console.WriteLine(" ");
+                        Console.WriteLine(" ");
+                        Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+
+
+
+                        // Este código es el que se encarga de imprimir las variables con los datos a modo de factura
+
+                          /* Usamos el DateTime y el Datetime.Now para convertir en una variable la
+                           fecha actual, esta cambia conforme al dia en el que se abra el programa 
+
+                           Tambien usamos en este la función de Pad.Left y Pad.Right para la estructura estética del programa, esa función
+                           se encarga de asignar espacios al lado que corresponda a la hora de imprimir la función que lo acompañe */
+
+                        DateTime fechaActual = DateTime.Now;
+                        string fechaActualStr = fechaActual.ToString("dd/MM/yyyy");
+
+
+
+                        Console.WriteLine("Cantidad".PadRight(11) + "Descripción".PadLeft(11) + "Fecha".PadLeft(18) + "Pago".PadLeft(16));
+                        Console.WriteLine(" ");
+                        if (controlUsuarios != 0)
+                        {
+                            Console.WriteLine("1".PadRight(11) + ConsultaDatos.Cliente12[0] + " " + ConsultaDatos.Cliente12[1] + fechaActualStr.PadLeft(22) + "₡8000".PadLeft(14));
+
+                        }
+                        else
+                        {
+                            Console.WriteLine("1".PadRight(11) + ConsultaDatos.Clientes[0] + " " + ConsultaDatos.Clientes[1] + fechaActualStr.PadLeft(22) + "₡8000".PadLeft(14));
+                        }
+
+
+
+                        Console.WriteLine("");
+                        Console.WriteLine("");
+                        Console.WriteLine("");
+                        Console.WriteLine("Subtotal: ₡8000");
+                        Console.WriteLine("I.V.A: ₡1040.00");
+                        Console.WriteLine(" ");
+                        Console.WriteLine("Total: ₡9040");
+                        Console.WriteLine("");
+                        Console.WriteLine("");
+                        Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+                        Console.WriteLine("");
+                        Console.WriteLine("");
+                        Console.WriteLine("Imprimir Factura (G) / Salir (S)");
+
+
+
+                        /* Este while es igual que el anterior, se encarga de leer la opción marcada por el
+                           usuario y finalizar el programa o continuar con la siguiente "pantalla" */
+
+                        while (true)
+                        {
+                            ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+                            if (keyInfo.Key == ConsoleKey.G)
+                            {
+                                Console.Clear();
+
+                                ClientesRegistrados();
+                            }
+                            else if (keyInfo.Key == ConsoleKey.S)
+                            {
+                                Environment.Exit(0);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOpción inválida. Presione 'G' o 'S'.");
+                            }
+                        }
+
+
+                        // Este código es el que se encarga de imprimir todos los clientes que se han registrado, pero funciona llamando variables de la clase "datos"
+
+                        void ClientesRegistrados()
+                        {
+
+
+                            Console.WriteLine("");
+                            Console.WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+                            Console.WriteLine("");
+                            Console.WriteLine("**TODOS LOS QUE VIAJAN DE PUNTARENAS A PAQUERA**");
+                            Console.WriteLine("");
+                            Console.WriteLine("");
+                            for (int i = 0; i < ConsultaDatos.Cliente1.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente1[i] + " ");
+                            }
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente2.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente2[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente3.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente3[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente4.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente4[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente5.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente5[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente6.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente6[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente7.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente7[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente8.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente8[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente9.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente9[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            for (int i = 0; i < ConsultaDatos.Cliente9.Length; i++)
+                            {
+                                Console.Write(ConsultaDatos.Cliente9[i] + " ");
+                            }
+
+                            Console.WriteLine(); 
+
+                            Console.Write(ConsultaDatos.Clientes[0] + " ");
+                            Console.Write(ConsultaDatos.Clientes[1] + " ");
+                            Console.Write(ConsultaDatos.Clientes[2] + " ");
+                            Console.Write(ConsultaDatos.Clientes[3] + " ");
+
+                            Console.WriteLine(); 
+
+                            Console.Write(ConsultaDatos.Cliente12[0] + " ");
+                            Console.Write(ConsultaDatos.Cliente12[1] + " ");
+                            Console.Write(ConsultaDatos.Cliente12[2] + " ");
+                            Console.Write(ConsultaDatos.Cliente12[3] + " ");
+
+                            Console.WriteLine("");
+                            Console.WriteLine("");
+                            Console.WriteLine("\nVolver a Inicio (I) / Salir (s)");
+
+                            while (true)
+                            {
+                                ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+                                if (keyInfo.Key == ConsoleKey.I)
+                                {
+                                    Console.Clear();
+                                    controlUsuarios = controlUsuarios + 1;
+                                    Horarios();
+                                }
+                                else if (keyInfo.Key == ConsoleKey.S)
+                                {
+                                    Environment.Exit(0);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("\nOpción inválida. Presione 'I' o 'S'.");
+                                }
+                            }
+
+                        }
+
+
+
+
+                    }
+
+                }
+            }
+
+        }
+
+    }
+
+}
+
+
+
+
+
+
+Class datos
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+/* Esta clase llamada datos se encarga de crear todas las variables con los datos de sus respectivos clientes para despues enviarlas a la "pantalla" que
+   muestra todos los clientes registrados */
+
+
+namespace ConsoleApp17
+{
+    public class datos
+    {
+        public string[] Horarios = new string[4];
+        public string[] Cliente1 = new string[] { "Mario", "Jesus", "208540506", "mariojesus@gmail" };
+        public string[] Cliente2 = new string[] { "Laura", "González", "305892714", "lauragonzalez@gmail.com" };
+        public string[] Cliente3 = new string[] { "Carlos", "Pérez", "102345678", "carlosperez@gmail.com" };
+        public string[] Cliente4 = new string[] { "Ana", "Sánchez", "507896324", "anasanchez@gmail.com" };
+        public string[] Cliente5 = new string[] { "Pedro", "Ramírez", "123456789", "pedroramirez@gmail.com" };
+        public string[] Cliente6 = new string[] { "María", "López", "987654321", "marialopez@gmail.com" };
+        public string[] Cliente7 = new string[] { "Juan", "Martínez", "876543210", "juanmartinez@gmail.com" };
+        public string[] Cliente8 = new string[] { "Sofía", "Rodríguez", "432109876", "sofia.rodriguez@gmail.com" };
+        public string[] Cliente9 = new string[] { "Gabriel", "Hernández", "987654321", "gabrielhernandez@gmail.com" };
+        public string[] Cliente10 = new string[] { "Julia", "Torres", "654321987", "juliatorres@gmail.com" };
+        public string[] Clientes = new string[4];
+        public string[] Cliente12 = new string[4];
+    }
+}
+
